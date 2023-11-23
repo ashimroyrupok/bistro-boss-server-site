@@ -258,7 +258,7 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/admin-stats', verifyToken, verifyAdmin, async (req, res) => {
+        app.get('/admin-stats',  async (req, res) => {
             const users = await userCollection.estimatedDocumentCount()
             const menuItem = await menuCollection.estimatedDocumentCount()
             const orders = await paymentsCollection.estimatedDocumentCount()
@@ -287,19 +287,19 @@ async function run() {
 
         // aggregate pipeline
 
-        app.get('/order-stats', async (req, res) => {
+        app.get('/order-stats',verifyToken,verifyAdmin, async (req, res) => {
             const result = await paymentsCollection.aggregate([
                 {
                     $unwind: "$cartId"
                 },
                 {
                     $lookup: {
-                        from: "menus",
-                        localField: "cartId",
-                        foreignField: "_id",
-                        as: "menuItems"
+                      from: 'menus',
+                      localField: 'cartId',
+                      foreignField: '_id',
+                      as: 'menuItems'
                     }
-                },
+                  },
                 {
                     $unwind: "$menuItems"
                 },
